@@ -1,5 +1,5 @@
 import { api } from "../../services/api";
-import type { CategoryDTO } from "../categories/categoru.dto";
+import type { CategoryDTO } from "../categories/category.dto";
 
 const ENDPOINT = "/categories";
 
