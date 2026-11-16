@@ -9,12 +9,26 @@ import {
 
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useCategories } from "../cases/hooks/use.category";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../components/ui/dialog";
+import { CategoryForm } from "../cases/categories/components/category-form";
 
 export function CategoriesPage() {
+  const [open, setOpen] = useState(false);
   const { data: categories, isLoading, isError } = useCategories();
 
   if (isLoading) {
@@ -22,17 +36,12 @@ export function CategoriesPage() {
   }
 
   if (isError) {
-    return (
-      <p className="p-6 text-red-500">
-        Erro ao carregar categorias.
-      </p>
-    );
+    return <p className="p-6 text-red-500">Erro ao carregar categorias.</p>;
   }
 
   return (
     <main className="min-h-screen bg-muted/40 p-8">
       <div className="mx-auto max-w-6xl space-y-6">
-
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Categorias</h1>
@@ -41,10 +50,20 @@ export function CategoriesPage() {
             </p>
           </div>
 
-          <Button>
-            <Plus />
-            Nova categoria
-          </Button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <Button onClick={() => setOpen(true)}>
+              <Plus />
+              Nova categoria
+            </Button>
+
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Nova categoria</DialogTitle>
+              </DialogHeader>
+
+              <CategoryForm onSuccess={() => setOpen(false)} />
+            </DialogContent>
+          </Dialog>
         </div>
 
         <Card>
@@ -99,11 +118,19 @@ export function CategoriesPage() {
 
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button variant="outline" size="icon" aria-label="Editar categoria">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            aria-label="Editar categoria"
+                          >
                             <Pencil />
                           </Button>
 
-                          <Button variant="destructive" size="icon" aria-label="Excluir categoria">
+                          <Button
+                            variant="destructive"
+                            size="icon"
+                            aria-label="Excluir categoria"
+                          >
                             <Trash2 />
                           </Button>
                         </div>
