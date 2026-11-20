@@ -1,10 +1,10 @@
 
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { CategoryDTO } from "../category.dto";
 import { api } from "../../../services/api";
 import { Label } from "../../../components/ui/label";
 import { Button, Input } from "@base-ui/react";
+import type { CategoryDTO } from "../dtos/category.dto";
 
 interface CategoryFormProps {
   onSuccess: () => void;
