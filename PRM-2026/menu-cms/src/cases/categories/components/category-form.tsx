@@ -1,27 +1,44 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { CategoryDTO } from "../category.dto";
 import { api } from "../../../services/api";
-import { Button, Input } from "@base-ui/react";
 import { Label } from "../../../components/ui/label";
+import { Button, Input } from "@base-ui/react";
 
 interface CategoryFormProps {
   onSuccess: () => void;
+  category?: CategoryDTO;
 }
 
-export function CategoryForm({ onSuccess }: CategoryFormProps) {
-  const [name, setName] = useState("");
-  const [icon, setIcon] = useState("");
+export function CategoryForm({ onSuccess, category }: CategoryFormProps) {
+  const [name, setName] = useState(category?.name ?? "");
+  const [icon, setIcon] = useState(category?.icon ?? "");
 
   const queryClient = useQueryClient();
+  const isEditing = !!category;
+
+  useEffect(() => {
+    setName(category?.name ?? "");
+    setIcon(category?.icon ?? "");
+  }, [category]);
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const response = await api.post("/categories", {
-        name,
-        icon: icon || null,
-      });
+      const data = {
+        name: name.trim(),
+        icon: icon.trim() || null,
+      };
 
+      if (isEditing) {
+        const response = await api.patch(
+          `/categories/${category.id}`,
+          data
+        );
+        return response.data;
+      }
+
+      const response = await api.post("/categories", data);
       return response.data;
     },
     onSuccess: () => {
@@ -65,12 +82,16 @@ export function CategoryForm({ onSuccess }: CategoryFormProps) {
 
       {mutation.isError && (
         <p className="text-sm text-red-500">
-          Erro ao cadastrar categoria. Verifique os dados.
+          Erro ao salvar categoria. Verifique os dados.
         </p>
       )}
 
       <Button type="submit" disabled={mutation.isPending}>
-        {mutation.isPending ? "Salvando..." : "Cadastrar categoria"}
+        {mutation.isPending
+          ? "Salvando..."
+          : isEditing
+            ? "Salvar alterações"
+            : "Cadastrar categoria"}
       </Button>
     </form>
   );
