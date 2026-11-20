@@ -24,12 +24,39 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "../components/ui/dialog";
 import { CategoryForm } from "../cases/categories/components/category-form";
+import type { CategoryDTO } from "../cases/categories/category.dto";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "../services/api";
 
 export function CategoriesPage() {
   const [open, setOpen] = useState(false);
   const { data: categories, isLoading, isError } = useCategories();
+  const queryClient = useQueryClient();
+  const [deleteError, setDeleteError] = useState("");
+
+  {
+    deleteError && <p className="text-sm text-red-500">{deleteError}</p>;
+  }
+  const deleteMutation = useMutation({
+    onError: (error: any) => {
+      setDeleteError(
+        error.response?.data?.message ||
+          "",
+      );
+    },
+    mutationFn: async (id: string) => {
+      await api.delete(`/categories/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+    },
+  });
+  const [selectedCategory, setSelectedCategory] = useState<
+    CategoryDTO | undefined
+  >();
 
   if (isLoading) {
     return <p className="p-6">Carregando categorias...</p>;
@@ -50,18 +77,34 @@ export function CategoriesPage() {
             </p>
           </div>
 
-          <Dialog open={open} onOpenChange={setOpen}>
-            <Button onClick={() => setOpen(true)}>
-              <Plus />
-              Nova categoria
-            </Button>
+          <Dialog
+            open={open}
+            onOpenChange={(value) => {
+              setOpen(value);
+              if (!value) setSelectedCategory(undefined);
+            }}
+          >
+            <DialogTrigger>
+              <Button onClick={() => setSelectedCategory(undefined)}>
+                <Plus />
+                Nova categoria
+              </Button>
+            </DialogTrigger>
 
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Nova categoria</DialogTitle>
+                <DialogTitle>
+                  {selectedCategory ? "Editar categoria" : "Nova categoria"}
+                </DialogTitle>
               </DialogHeader>
 
-              <CategoryForm onSuccess={() => setOpen(false)} />
+              <CategoryForm
+                category={selectedCategory}
+                onSuccess={() => {
+                  setOpen(false);
+                  setSelectedCategory(undefined);
+                }}
+              />
             </DialogContent>
           </Dialog>
         </div>
@@ -122,6 +165,10 @@ export function CategoriesPage() {
                             variant="outline"
                             size="icon"
                             aria-label="Editar categoria"
+                            onClick={() => {
+                              setSelectedCategory(category);
+                              setOpen(true);
+                            }}
                           >
                             <Pencil />
                           </Button>
@@ -130,6 +177,16 @@ export function CategoriesPage() {
                             variant="destructive"
                             size="icon"
                             aria-label="Excluir categoria"
+                            disabled={deleteMutation.isPending}
+                            onClick={() => {
+                              if (
+                                window.confirm(
+                                  "Deseja realmente excluir esta categoria?",
+                                )
+                              ) {
+                                deleteMutation.mutate(category.id);
+                              }
+                            }}
                           >
                             <Trash2 />
                           </Button>
