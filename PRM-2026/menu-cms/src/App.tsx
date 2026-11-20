@@ -1,7 +1,7 @@
-import { CategoriesPage } from "../src/pages/categories";
+import { SpotsPage } from "./pages/spots";
 
 function App() {
-  return <CategoriesPage />;
+  return <SpotsPage />;
 }
 
 export default App;
