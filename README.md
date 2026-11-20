@@ -1,32 +1,71 @@
-# React + TypeScript + Vite
+# Menu CMS
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Sistema de gerenciamento de cardápio desenvolvido como projeto acadêmico.
 
-Currently, two official plugins are available:
+## Sobre o projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+O Menu CMS permite gerenciar os principais recursos de um estabelecimento, facilitando o controle de produtos, categorias, mesas, comandas e pedidos.
 
-## React Compiler
+## Funcionalidades
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Categorias:** cadastro, edição e exclusão de categorias.
+- **Produtos:** cadastro, edição, exclusão e filtro por categoria.
+- **Mesas:** cadastro, edição e controle de mesas ativas e inativas.
+- **Comandas:** visualização e fechamento de comandas abertas.
+- **Pedidos:** visualização dos pedidos e atualização de status.
 
-## Expanding the Oxlint configuration
+## Tecnologias utilizadas
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+### Frontend
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- TanStack Query
+- Axios
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+### Backend
+- NestJS
+- TypeScript
+- TypeORM
+- PostgreSQL
+
+## Como executar o projeto
+
+### 1. Clonar o repositório
+
+```bash
+git clone https://github.com/VitorSorvete/menu-cms.git
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+### 2. Acessar a pasta
+
+```bash
+cd menu-cms
+```
+
+### 3. Instalar as dependências
+
+```bash
+npm install
+```
+
+### 4. Configurar as variáveis de ambiente
+
+Crie um arquivo `.env` na raiz do frontend com:
+
+```env
+VITE_API_URL=http://localhost:3000
+```
+
+### 5. Executar o frontend
+
+```bash
+npm run dev
+```
+
+O backend também precisa estar configurado e em execução para que o sistema funcione corretamente.
+
+## Autor
+
+Desenvolvido por Vitor Moreira.
